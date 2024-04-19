@@ -3,7 +3,7 @@ local thread = require("thread")
 local event = require("event")
 local keyboard = require("keyboard")
 
-local colors = require("lib.screenColors")
+local colors = require("screenColors")
 local config = require("reactorctl-cfg")
 
 if not component.isAvailable("nc_fission_reactor") then
