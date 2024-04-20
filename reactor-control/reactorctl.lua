@@ -11,11 +11,6 @@ if not component.isAvailable("nc_fission_reactor") then
     return
 end
 
-if not component.isAvailable("transposer") then
-    print("No Transposer detected!")
-    return
-end
-
 if not component.isAvailable("gpu") then
     print("No GPU detected!")
     return
