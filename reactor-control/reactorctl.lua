@@ -93,7 +93,7 @@ local function reactorThread(reactorProxy, row)
 
         -- Draw fuel name
         gpu.setForeground(colors.white)
-        gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
+        gpu.set(4, row, "Fuel: " .. row .. "    ")
 
         -- Draw progressbar
         local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
@@ -137,7 +137,7 @@ function main()
     local threads = {}
     local index = 1
     for addr, proxy in pairs(reactors) do
-        table.insert(threads, thread.create(reactorThread(proxy, index)))
+        thread[addr] = thread.create(reactorThread(proxy, index))
         drawSeparator(index + 1)
         index = index + 2
     end
@@ -145,10 +145,6 @@ function main()
     while true do
         thread.waitForAll(threads)
         os.sleep(0)
-    end
-
-    for t in #threads do
-        t:kill()
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
