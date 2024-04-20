@@ -81,8 +81,9 @@ function initScreen()
 end
 
 
-local function drawSeperator(row)
-    gpu.fill(0, row, viewportWidth, 1, "─")
+local function drawSeparator(row)
+    local width, _ = gpu.getResolution()
+    gpu.fill(0, row, width, 1, "─")
 end
 
 -- draw a row of reactor stats
@@ -109,11 +110,11 @@ function main()
         end
         thread.waitForAll(threads)
 
-        drawSeperator(0)
+        drawSeparator(0)
         local rowIndex = 0
         for address, _ in pairs(reactors) do
             local reactorStats = event.pull("reactor_" .. address)
-            drawSeperator(rowIndex + 1)
+            drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 1
         end
 
