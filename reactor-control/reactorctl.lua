@@ -1,6 +1,6 @@
 local component = require("component")
 local colors = require("screenColors")
-local thread = require("thread")
+local text = require("text")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -76,52 +76,51 @@ end
 
 
 local function drawSeparator(row)
-    gpu.fill(0, row, vpWidth, 1, "─")
+    gpu.set(0, row, string.rep("─", vpWidth))
 end
 
-local function reactorCoroutine(reactorProxy, row)
+local function reactorCoroutine()
     while true do
-        local reactorStats = getReactorStats(reactorProxy)
+        drawSeparator(1)
+        local row = 2
+        for _, proxy in pairs(reactors) do
+            local reactorStats = getReactorStats(proxy)
 
-        -- Draw activity
-        local activityColor = colors.red
-        if reactorStats.isActive then
-            activityColor = colors.green
+            -- Draw activity
+            local activityColor = colors.red
+            if reactorStats.isActive then
+                activityColor = colors.green
+            end
+            gpu.setForeground(activityColor)
+            gpu.set(1, row, "██")
+
+            -- Draw fuel name
+            gpu.setForeground(colors.white)
+            gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
+
+            -- Draw progressbar
+            local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
+
+            if roundedTotalProcessTime > 0 then
+                local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+                local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+                gpu.setForeground(colors.red)
+                gpu.set(22, row, string.rep("█", progress))
+                gpu.setForeground(colors.green)
+                gpu.set(22 + progress, row, string.rep("█", 10 - progress))
+            else
+                gpu.set(22 + i, row, string.rep("█", 10))
+            end
+
+            local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
+            gpu.setForeground(colors.white)
+            gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s  ", 18) .. "Power: " .. reactorStats.power)
+
+            drawSeparator(row + 1)
+
+            row = row + 2
+            coroutine.yield()
         end
-        gpu.setForeground(activityColor)
-        gpu.set(1, row, "██")
-
-        -- Draw fuel name
-        gpu.setForeground(colors.white)
-        gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
-
-        -- Draw progressbar
-        local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
-
-        if roundedTotalProcessTime > 0 then
-            local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
-            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-            gpu.setForeground(colors.red)
-            for i = 0, clampedProgress do
-                gpu.set(22 + i, row, "█")
-            end
-            gpu.setForeground(colors.green)
-            for j = clampedProgress, 10 do
-                gpu.set(22 + j, row, "█")
-            end
-        else
-            gpu.setForeground(colors.red)
-            for i = 0, 10 do
-                gpu.set(22 + i, row, "█")
-            end
-        end
-
-        local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
-        gpu.setForeground(colors.white)
-        gpu.set(34, row, "Time Left: " .. timeLeft .. " s  ")
-
-        -- Draw generated power
-        gpu.set(60, row, "Power: " .. reactorStats.power)
         coroutine.yield()
     end
 end
@@ -133,18 +132,10 @@ function main()
 
     drawSeparator(1)
 
-    local coroutines = {}
-    local index = 2
-    for addr, proxy in pairs(reactors) do
-        table.insert(coroutines, coroutine.create(reactorCoroutine, proxy, index))
-        drawSeparator(index + 1)
-        index = index + 2
-    end
+    local c = coroutine.create(reactorCoroutine)
 
     while true do
-        for addr, c in pairs(coroutines) do
-            coroutine.resume(c)
-        end
+        coroutine.resume(c)
         os.sleep(0)
     end
 
