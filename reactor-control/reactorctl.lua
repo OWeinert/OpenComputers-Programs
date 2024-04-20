@@ -1,6 +1,7 @@
 local component = require("component")
 local keyboard = require("keyboard")
 local colors = require("screenColors")
+local thread = require("thread")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -96,25 +97,32 @@ local function updateCoroutine()
 
             -- Draw fuel name
             gpu.setForeground(colors.white)
-            gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "  ")
+            gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "    ")
 
             -- Draw progressbar
-            local roundedTotalProcessTime = math.ceil(reactorStats.totalProcessTime)
+            local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
 
-            local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
-            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-            gpu.setForeground(colors.green)
-            for i = 0, clampedProgress do
-                gpu.set(22 + i, rowIndex, "█")
-            end
-            gpu.setForeground(colors.red)
-            for j = clampedProgress, 10 do
-                gpu.set(22 + j, rowIndex, "█")
+            if roundedTotalProcessTime > 0 then
+                local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+                local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+                gpu.setForeground(colors.red)
+                for i = 0, clampedProgress do
+                    gpu.set(22 + i, rowIndex, "█")
+                end
+                gpu.setForeground(colors.green)
+                for j = clampedProgress, 10 do
+                    gpu.set(22 + j, rowIndex, "█")
+                end
+            else
+                gpu.setForeground(colors.red)
+                for i = 0, 10 do
+                    gpu.set(22 + i, rowIndex, "█")
+                end
             end
 
             local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
-            gpu.set(34, rowIndex, "Time Left: " .. reactorStats.currentProcessTime .. " s  ")
+            gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
