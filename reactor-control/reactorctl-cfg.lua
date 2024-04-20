@@ -1,4 +1,4 @@
-local config {}
+local config = {}
 
 config.rowHeight = 1
 
