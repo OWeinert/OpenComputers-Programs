@@ -115,7 +115,8 @@ local function updateCoroutine()
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
-            drawReactorStats(reactorStats, rowIndex)
+            --drawReactorStats(reactorStats, rowIndex)
+            coroutine.yield()
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
             coroutine.yield()
