@@ -31,7 +31,7 @@ local function getReactorStats(reactorProxy)
         power = reactorProxy.getReactorProcessPower(),
         energyStored = reactorProxy.getEnergyStored(),
         currentProcessTime = reactorProxy.getCurrentProcessTime(),
-        totalProcessTime = reactorProxy.getReactorProcessTime()
+        totalProcessTime = reactorProxy.getFissionFuelTime()
     }
 end
 
@@ -87,20 +87,20 @@ local function updateCoroutine()
                 activityColor = colors.green
             end
             gpu.setForeground(activityColor)
-            gpu.set(0, rowIndex, "██")
+            gpu.set(1, rowIndex, "██")
 
             -- Draw fuel name
             gpu.setForeground(colors.white)
-            gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
+            gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
             -- Draw progressbar
             local roundedProgressTime = math.floor(reactorStats.currentProcessTime + 0.5)
             local roundedTotalProgressTime = math.floor(reactorStats.totalProcessTime + 0.5)
-            gpu.set(17, rowIndex, roundedProgressTime .. "/" .. roundedTotalProgressTime)
+            gpu.set(19, rowIndex, roundedProgressTime .. "/" .. roundedTotalProgressTime)
 
             -- Draw generated power
             gpu.setForeground(colors.white)
-            gpu.set(40, rowIndex, "Power: " .. reactorStats.power)
+            gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
 
             -- draw seperator
             drawSeparator(rowIndex + 1)
