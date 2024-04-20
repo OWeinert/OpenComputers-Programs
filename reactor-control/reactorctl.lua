@@ -123,8 +123,6 @@ local function reactorThread(reactorProxy, index)
         -- Draw generated power
         gpu.set(60, index, "Power: " .. reactorStats.power)
 
-        -- draw seperator
-        drawSeparator(index + 1)
         os.sleep(0)
     end
 end
@@ -140,11 +138,19 @@ function main()
     local index = 1
     for _, proxy in pairs(reactors) do
         table.insert(threads, thread.create(reactorThread(proxy, index)))
+        drawSeparator(index + 1)
         index = index + 2
     end
 
     while true do
+        if keyboard.isControlDown() and keyboard.isKeyDown("w") then
+            break;
+        end
         os.sleep(0)
+    end
+
+    for t in #threads do
+        t:kill()
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
