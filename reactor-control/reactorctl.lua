@@ -111,7 +111,7 @@ local function updateCoroutine()
 
             local timeLeft = math.ceil(reactorStats.totalProcessTime - reactorStats.currentProcessTime / 20)
             gpu.setForeground(colors.white)
-            gpu.set("Time Left: " .. timeLeft)
+            gpu.set(41, rowIndex, "Time Left: " .. timeLeft .. " s")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
