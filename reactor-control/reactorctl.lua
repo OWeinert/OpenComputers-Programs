@@ -126,6 +126,7 @@ function main()
             t:kill()
             break
         end
+        os.sleep(0)
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
