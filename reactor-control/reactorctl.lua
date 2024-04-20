@@ -119,7 +119,7 @@ local function reactorCoroutine()
 
             local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
-            gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s  ", 18) .. "Power: " .. reactorStats.power)
+            gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18) .. "Power: " .. reactorStats.power)
 
             row = row + 2
             coroutine.yield()
