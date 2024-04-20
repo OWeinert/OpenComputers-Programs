@@ -80,10 +80,6 @@ local function drawSeparator(row)
 end
 
 local function reactorCoroutine()
-    drawSeparator(1)
-    for i = 0, reactorCount do
-        drawSeparator((2 * i) + 1)
-    end
     while true do
         local row = 2
         for addr, proxy in pairs(reactors) do
@@ -134,6 +130,11 @@ end
 function main()
     initReactors()
     initScreen()
+
+    drawSeparator(1)
+    for i = 0, reactorCount do
+        drawSeparator((2 * i) + 1)
+    end
 
     local c = coroutine.create(reactorCoroutine)
     coroutine.resume(c)
