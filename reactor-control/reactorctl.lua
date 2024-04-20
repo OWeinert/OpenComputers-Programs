@@ -103,18 +103,18 @@ local function updateCoroutine()
 
             local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
             local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-            gpu.setForeground(colors.green)
+            gpu.setForeground(colors.red)
             for i = 0, clampedProgress do
                 gpu.set(22 + i, rowIndex, "█")
             end
-            gpu.setForeground(colors.red)
+            gpu.setForeground(colors.green)
             for j = clampedProgress, 10 do
                 gpu.set(22 + j, rowIndex, "█")
             end
 
             local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
-            gpu.set(34, rowIndex, "Time Left: " .. reactorStats.currentProcessTime .. " s  ")
+            gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
