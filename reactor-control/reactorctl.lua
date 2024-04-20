@@ -76,26 +76,7 @@ end
 
 -- draw a row of reactor stats
 local function drawReactorStats(reactorStats, rowIndex)
-    local activityColor = colors.red
-    if reactorStats.isActive then
-        activityColor = colors.green
-    end
 
-    -- Draw activity
-    gpu.setForeground(activityColor)
-    gpu.set(0, rowIndex, "██")
-
-    -- Draw fuel name
-    gpu.setForeground(colors.white)
-    gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
-
-    -- Draw progressbar
-
-    gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
-
-    -- Draw generated power
-    gpu.setForeground(colors.white)
-    gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
 end
 
 local function updateCoroutine()
@@ -103,11 +84,37 @@ local function updateCoroutine()
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
-            drawReactorStats(getReactorStats(proxy), rowIndex)
+            local reactorStats = getReactorStats(proxy)
             coroutine.yield()
+
+            -- Draw activity
+            local activityColor = colors.red
+            if reactorStats.isActive then
+                activityColor = colors.green
+            end
+            gpu.setForeground(activityColor)
+            gpu.set(0, rowIndex, "██")
+            coroutine.yield()
+
+            -- Draw fuel name
+            gpu.setForeground(colors.white)
+            gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
+            coroutine.yield()
+
+            -- Draw progressbar
+            gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
+            coroutine.yield()
+
+            -- Draw generated power
+            gpu.setForeground(colors.white)
+            gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
+            coroutine.yield()
+
+            -- draw seperator
             drawSeparator(rowIndex + 1)
-            rowIndex = rowIndex + 2
             coroutine.yield()
+
+            rowIndex = rowIndex + 2
         end
         coroutine.yield()
     end
@@ -126,6 +133,7 @@ function main()
             break
         end
         coroutine.resume(update)
+        os.sleep(0)
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
