@@ -94,9 +94,9 @@ local function updateCoroutine()
             gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
             -- Draw progressbar
-            local roundedProgressTime = math.floor(reactorStats.currentProcessTime + 0.5)
-            local roundedTotalProgressTime = math.floor(reactorStats.totalProcessTime + 0.5)
-            gpu.set(17, roundedProgressTime .. "/" .. roundedTotalProgressTime)
+            local roundedProgressTime = math.floor(reactorStats.currentProcessTime + 0.5) .. ""
+            local roundedTotalProgressTime = math.floor(reactorStats.totalProcessTime + 0.5) .. ""
+            gpu.set(17, roundedProgressTime)
 
             -- Draw generated power
             gpu.setForeground(colors.white)
