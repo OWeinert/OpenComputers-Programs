@@ -91,17 +91,7 @@ local function drawReactorStats(reactorStats, rowIndex)
     gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
     -- Draw progressbar
-    --[[
-    local progress = math.floor(reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
-    gpu.setForeground(colors.green)
-    for i = 0, progress do
-        gpu.set(17 + i, rowIndex, "█")
-    end
-    gpu.setForeground(colors.red)
-    for j = progress, 10 do
-        gpu.set(17 + j, rowIndex, "█")
-    end
-    ]]
+
     gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
 
     -- Draw generated power
@@ -116,12 +106,9 @@ local function updateThread()
         for _, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
             drawReactorStats(reactorStats, rowIndex)
-            coroutine.yield()
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
-            coroutine.yield()
         end
-        coroutine.yield()
     end
 end
 
