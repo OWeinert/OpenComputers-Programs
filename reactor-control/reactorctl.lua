@@ -143,7 +143,7 @@ function main()
 
     while true do
         for c in #coroutines do
-            coroutine.resume(c)
+            coroutine.resume(coroutines[c])
         end
         os.sleep(0)
     end
