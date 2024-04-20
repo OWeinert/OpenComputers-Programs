@@ -56,11 +56,11 @@ function initScreen()
         return
     end
 
-    local width = maxHeight / 3 * 5
-    gpu.setResolution(width, maxHeight)
+    local height = maxWidth / 5 * 3
+    gpu.setResolution(maxWidth, height)
 
-    vpWidth = width
-    vpHeight = maxHeight
+    vpWidth = maxWidth
+    vpHeight = height
     gpu.setViewport(vpHeight, vpWidth)
 
     gpu.setBackground(colors.black)
