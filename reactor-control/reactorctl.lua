@@ -142,8 +142,8 @@ function main()
     end
 
     while true do
-        for c in #coroutines do
-            coroutine.resume(coroutines[c])
+        for addr, c in pairs(coroutines) do
+            coroutine.resume(c)
         end
         os.sleep(0)
     end
