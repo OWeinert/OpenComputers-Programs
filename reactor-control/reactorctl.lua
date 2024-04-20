@@ -126,7 +126,6 @@ function main()
     local update = coroutine.create(updateCoroutine)
     coroutine.resume(update)
     while true do
-        io.write("main\n")
         coroutine.resume(update)
         os.sleep(0)
     end
