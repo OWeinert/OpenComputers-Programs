@@ -1,7 +1,6 @@
 local component = require("component")
 local keyboard = require("keyboard")
 local colors = require("screenColors")
-local config = require("reactorctl-cfg")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -91,15 +90,18 @@ local function drawReactorStats(reactorStats, rowIndex)
     gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
     -- Draw progressbar
+    --[[
     local progress = math.floor(reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
     gpu.setForeground(colors.green)
     for i = 0, progress do
-        gpu.set(12 + i, rowIndex, "█")
+        gpu.set(17 + i, rowIndex, "█")
     end
     gpu.setForeground(colors.red)
     for j = progress, 10 do
-        gpu.set(12 + j, rowIndex, "█")
+        gpu.set(17 + j, rowIndex, "█")
     end
+    ]]
+    gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
 
     -- Draw generated power
     gpu.setForeground(colors.white)
@@ -131,13 +133,15 @@ function main()
     coroutine.resume(update)
 
     while true do
-        if keyboard.isControlDown() and keyboard.isKeyDown("x") then
+        if keyboard.isControlDown() and keyboard.isKeyDown("w") then
             os.write("program exited")
             coroutine.close(update)
             return
         end
         coroutine.resume(update)
     end
+
+    os.exit()
 end
 
 
