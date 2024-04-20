@@ -165,7 +165,7 @@ local function reactorCoroutine()
         local row = 2
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
-            drawReactorChange(reactorStats, lastReactorStats[addr])
+            drawReactorChange(reactorStats, lastReactorStats[addr], row)
 
             row = row + 2
             lastReactorStats[addr] = reactorStats
