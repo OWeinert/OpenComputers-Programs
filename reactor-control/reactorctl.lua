@@ -59,7 +59,7 @@ function initScreen()
     screenWidth = (maxHeight / 3) * 5
     screenHeight = maxHeight
     gpu.setResolution(screenWidth, screenHeight)
-
+    gpu.setViewport(screenWidth, screenHeight)
 
     gpu.setBackground(colors.black)
     gpu.setForeground(colors.white)
