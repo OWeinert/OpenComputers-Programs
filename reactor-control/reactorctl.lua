@@ -78,7 +78,7 @@ local function drawSeparator(row)
 end
 
 
-local function drawReactorDirect(reactorStats)
+local function drawReactorDirect(reactorStats, row)
     local activityColor = colors.red
     if reactorStats.isActive then
         activityColor = colors.green
@@ -157,12 +157,14 @@ local function drawReactorChange(reactorStats, reactorStatsOld, row)
 end
 
 local function reactorCoroutine()
+    local row = 2
     for _, proxy in pairs(reactors) do
-        drawReactorDirect(getReactorStats(proxy))
+        drawReactorDirect(getReactorStats(proxy), row)
+        row = row + 2
         coroutine.yield()
     end
     while true do
-        local row = 2
+        row = 2
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
             drawReactorChange(reactorStats, lastReactorStats[addr], row)
