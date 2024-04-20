@@ -18,9 +18,6 @@ end
 
 local gpu = component.gpu
 
-local viewportWidth = 0
-local viewportHeight = 0
-
 -- reactors consisting of address and proxy to the nc_fission_reactor
 local reactors = {}
 
@@ -80,11 +77,7 @@ function initScreen()
     end
 
     gpu.setResolution(maxWidth, maxHeight)
-
-    viewportHeight = 1 + (config.rowHeight + 1) * #reactors
-    viewportWidth = viewportHeight / 3 * 5 -- 3:5 screen expected
-
-    gpu.setViewport(viewportWidth, viewportHeight)
+    gpu.setViewport(maxWidth, maxHeight)
 
     -- allocate buffers
     for address, _ in pairs(reactors) do
@@ -110,14 +103,6 @@ local function drawReactorStats(buffer, reactorStats, rowIndex)
         activityColor = colors.green
     end
 
-    gpu.set(0, 0, "██")
-    gpu.set(3, 0, reactorStats.fuelName)
-    gpu.set(13, 0, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
-
-    local width, height = gpu.getResolution()
-
-    local rowOffset = 1 + (config.rowHeight + 1) * rowIndex
-    gpu.bitblt(0, rowOffset, 1, width, height, buffer[address], 0, 0)
 end
 
 
@@ -139,7 +124,6 @@ function main()
         local rowIndex = 0
         for address, _ in pairs(reactors) do
             local reactorStats = event.pull("reactor_" .. address)
-            drawReactorStats(buffers[address], reactorStats, rowIndex)
             drawSeperator(rowIndex + 1)
             rowIndex = rowIndex + 1
         end
