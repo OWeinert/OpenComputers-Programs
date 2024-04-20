@@ -114,7 +114,7 @@ local function updateCoroutine()
 
             local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
-            gpu.set(34, rowIndex, "Time Left: " .. clampedProgress .. " s  ")
+            gpu.set(34, rowIndex, "Time Left: " .. reactorStats.currentProcessTime .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
