@@ -82,6 +82,8 @@ local function updateCoroutine()
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
+            gpu.fill(0, rowIndex, vpWidth, 1, " ")
+
             local reactorStats = getReactorStats(proxy)
 
             -- Draw activity
@@ -107,15 +109,17 @@ local function updateCoroutine()
                 gpu.set(19 + j, rowIndex, "█")
             end
 
-            -- Draw generated power
+            local timeLeft = math.ceil(reactorStats.totalProcessTime - reactorStats.currentProcessTime / 20)
             gpu.setForeground(colors.white)
+            gpu.set("Time Left: " .. timeLeft)
+
+            -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
 
             -- draw seperator
             drawSeparator(rowIndex + 1)
 
             rowIndex = rowIndex + 2
-            coroutine.yield()
         end
         coroutine.yield()
     end
