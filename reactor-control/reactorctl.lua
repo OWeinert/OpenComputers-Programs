@@ -56,12 +56,11 @@ function initScreen()
         return
     end
 
-    gpu.setResolution(maxWidth, maxHeight)
+    local width = maxHeight / 3 * 5
+    gpu.setResolution(width, maxHeight)
 
-    --calculate viewport
-    vpHeight = 2 * #reactors + 1
-    vpWidth = (vpHeight / 3) * 5
-
+    vpWidth = width
+    vpHeight = maxHeight
     gpu.setViewport(vpHeight, vpWidth)
 
     gpu.setBackground(colors.black)
@@ -107,9 +106,10 @@ function main()
 
     local running = true
     while running do
-        if keyboard.isControlDown() and keyboard.isKeyDown("x") then
+        if keyboard.isControlDown() then
             running = false
-            break;
+            print("program exited")
+            break
         end
     end
 end
