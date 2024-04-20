@@ -56,8 +56,7 @@ function initScreen()
     -- check if needed resolution is supported
     local maxWidth, maxHeight = gpu.maxResolution()
     if maxWidth < 160 and maxHeight < 50 then
-        print("PLEASE INSTALL TIER 3 GRAPHICS CARD!")
-        return
+        error("PLEASE INSTALL TIER 3 GRAPHICS CARD!")
     end
 
     gpu.setResolution(maxWidth, maxHeight)
