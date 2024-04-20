@@ -79,8 +79,7 @@ local function drawSeparator(row)
     gpu.fill(0, row, vpWidth, 1, "─")
 end
 
-local function reactorThread(reactorProxy, row)
-    os.sleep(0)
+local function reactorCoroutine(reactorProxy, row)
     while true do
         local reactorStats = getReactorStats(reactorProxy)
 
@@ -94,7 +93,7 @@ local function reactorThread(reactorProxy, row)
 
         -- Draw fuel name
         gpu.setForeground(colors.white)
-        gpu.set(4, row, "Fuel: " .. row .. "    ")
+        gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
 
         -- Draw progressbar
         local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
@@ -123,7 +122,7 @@ local function reactorThread(reactorProxy, row)
 
         -- Draw generated power
         gpu.set(60, row, "Power: " .. reactorStats.power)
-        os.sleep(0)
+        coroutine.yield()
     end
 end
 
@@ -134,15 +133,18 @@ function main()
 
     drawSeparator(1)
 
-    local threads = {}
+    local coroutines = {}
     local index = 2
     for addr, proxy in pairs(reactors) do
-        threads[addr] = thread.create(reactorThread(proxy, index))
+        table.insert(coroutines, coroutine.create(reactorCoroutine, proxy, index))
         drawSeparator(index + 1)
         index = index + 2
     end
 
     while true do
+        for c in #coroutines do
+            coroutine.resume(c)
+        end
         os.sleep(0)
     end
 
