@@ -82,7 +82,7 @@ end
 local function reactorCoroutine()
     drawSeparator(1)
     for i = 0, reactorCount do
-        drawSeparator(2 * (i + 1))
+        drawSeparator((2 * i) + 1)
     end
     coroutine.yield()
     while true do
