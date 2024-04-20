@@ -133,7 +133,7 @@ function main()
     local t = thread.create(updateThread)
 
     while true do
-        if keyboard.isControlDown() and keyboard.isKeyDown("w") then
+        if keyboard.isControlDown() and keyboard.isKeyDown(0x11) then
             t:kill()
             break
         end
