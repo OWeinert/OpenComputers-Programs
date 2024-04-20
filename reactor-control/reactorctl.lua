@@ -74,20 +74,17 @@ local function drawSeparator(row)
     gpu.fill(0, row, vpWidth, 1, "─")
 end
 
--- draw a row of reactor stats
-local function drawReactorStats(reactorStats, rowIndex)
-
-end
-
 local function updateCoroutine()
     while true do
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
+            os.write(1)
             local reactorStats = getReactorStats(proxy)
             coroutine.yield()
 
             -- Draw activity
+            os.write(2)
             local activityColor = colors.red
             if reactorStats.isActive then
                 activityColor = colors.green
@@ -97,25 +94,30 @@ local function updateCoroutine()
             coroutine.yield()
 
             -- Draw fuel name
+            os.write(3)
             gpu.setForeground(colors.white)
             gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
             coroutine.yield()
 
             -- Draw progressbar
+            os.write(4)
             gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
             coroutine.yield()
 
             -- Draw generated power
+            os.write(5)
             gpu.setForeground(colors.white)
             gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
             coroutine.yield()
 
             -- draw seperator
+            os.write(6)
             drawSeparator(rowIndex + 1)
             coroutine.yield()
 
             rowIndex = rowIndex + 2
         end
+        os.write(7)
         coroutine.yield()
     end
 end
@@ -128,10 +130,6 @@ function main()
     local update = coroutine.create(updateCoroutine)
     coroutine.resume(update)
     while true do
-        if keyboard.isControlDown() and keyboard.isKeyDown(0x11) then
-            coroutine.close(update)
-            break
-        end
         coroutine.resume(update)
         os.sleep(0)
     end
