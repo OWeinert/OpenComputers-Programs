@@ -76,15 +76,12 @@ end
 
 local function updateCoroutine()
     while true do
-        io.write("coroutine:")
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
-            io.write("1")
             local reactorStats = getReactorStats(proxy)
 
             -- Draw activity
-            io.write("2")
             local activityColor = colors.red
             if reactorStats.isActive then
                 activityColor = colors.green
@@ -93,26 +90,24 @@ local function updateCoroutine()
             gpu.set(0, rowIndex, "██")
 
             -- Draw fuel name
-            io.write("3")
             gpu.setForeground(colors.white)
             gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
             -- Draw progressbar
-            io.write(reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
+            local roundedProgressTime = math.floor(reactorStats.currentProcessTime + 0.5)
+            local roundedTotalProgressTime = math.floor(reactorStats.totalProcessTime + 0.5)
+            gpu.set(17, roundedProgressTime .. "/" .. roundedTotalProgressTime)
 
             -- Draw generated power
-            io.write("5")
             gpu.setForeground(colors.white)
-            gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
+            gpu.set(40, rowIndex, "Power: " .. reactorStats.power)
 
             -- draw seperator
-            io.write("6")
             drawSeparator(rowIndex + 1)
 
             rowIndex = rowIndex + 2
             coroutine.yield()
         end
-        io.write("7\n")
         coroutine.yield()
     end
 end
