@@ -81,6 +81,7 @@ end
 local function reactorCoroutine()
     for addr, proxy in pairs(reactors) do
         lastReactorStats[addr] = getReactorStats(proxy)
+        coroutine.yield()
     end
     while true do
         local row = 2
@@ -101,14 +102,14 @@ local function reactorCoroutine()
             coroutine.yield()
 
             -- Draw fuel name
-            if not (reactorStatsOld.fuelName == reactorStats.fuelName) then
+            if reactorStatsOld == nil or not (reactorStatsOld.fuelName == reactorStats.fuelName) then
                 gpu.setForeground(colors.white)
                 gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
             end
             coroutine.yield()
 
             -- Draw progressbar
-            if not (reactorStatsOld.totalProcessTime == reactorStats.totalProcessTime)
+            if reactorStatsOld == nil or not (reactorStatsOld.totalProcessTime == reactorStats.totalProcessTime)
                 or not (reactorStatsOld.currentProcessTime == reactorStats.currentProcessTime) then
 
                 local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
@@ -131,13 +132,13 @@ local function reactorCoroutine()
             end
             coroutine.yield()
 
-            if not (reactorStatsOld.power == reactorStats.power) then
+            if reactorStatsOld == nil or not (reactorStatsOld.power == reactorStats.power) then
                 gpu.set(52, row, "Power: " .. reactorStats.power)
             end
             coroutine.yield()
 
-            row = row + 2
             lastReactorStats[addr] = reactorStats
+            row = row + 2
             coroutine.yield()
         end
         coroutine.yield()
