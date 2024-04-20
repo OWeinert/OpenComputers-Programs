@@ -91,7 +91,7 @@ local function reactorCoroutine()
             coroutine.yield()
 
             -- Draw activity
-            if not (reactorStatsOld.isActive == reactorStats.isActive) then
+            if reactorStatsOld == nil or not (reactorStatsOld.isActive == reactorStats.isActive) then
                 local activityColor = colors.red
                 if reactorStats.isActive then
                     activityColor = colors.green
