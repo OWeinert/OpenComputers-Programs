@@ -76,48 +76,44 @@ end
 
 local function updateCoroutine()
     while true do
+        os.write("coroutine:")
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
-            os.write(1)
+            os.write("1")
             local reactorStats = getReactorStats(proxy)
-            coroutine.yield()
 
             -- Draw activity
-            os.write(2)
+            os.write("2")
             local activityColor = colors.red
             if reactorStats.isActive then
                 activityColor = colors.green
             end
             gpu.setForeground(activityColor)
             gpu.set(0, rowIndex, "██")
-            coroutine.yield()
 
             -- Draw fuel name
-            os.write(3)
+            os.write("3")
             gpu.setForeground(colors.white)
             gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
-            coroutine.yield()
 
             -- Draw progressbar
-            os.write(4)
+            os.write("4")
             gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
-            coroutine.yield()
 
             -- Draw generated power
-            os.write(5)
+            os.write("5")
             gpu.setForeground(colors.white)
             gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
-            coroutine.yield()
 
             -- draw seperator
-            os.write(6)
+            os.write("6")
             drawSeparator(rowIndex + 1)
-            coroutine.yield()
 
             rowIndex = rowIndex + 2
+            coroutine.yield()
         end
-        os.write(7)
+        os.write("7\n")
         coroutine.yield()
     end
 end
@@ -130,6 +126,7 @@ function main()
     local update = coroutine.create(updateCoroutine)
     coroutine.resume(update)
     while true do
+        os.write("main\n")
         coroutine.resume(update)
         os.sleep(0)
     end
