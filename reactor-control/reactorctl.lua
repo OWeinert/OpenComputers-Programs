@@ -116,7 +116,7 @@ local function updateCoroutine()
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
 
-            gpu.set(75, rowIndex, reactorStats.processMod)
+            gpu.set(75, rowIndex, "" .. math.floor(reactorStats.processMod))
 
             -- draw seperator
             drawSeparator(rowIndex + 1)
