@@ -156,6 +156,11 @@ local function drawReactorChange(reactorStats, reactorStatsOld, row)
     end
 end
 
+--[[
+    First draw all reactors once without looking for changes in reactorStats
+    after that only redraw if the stats changed
+    Ugly but it works with a bit better performance since the OpenComputer gpu is quite limited
+]]
 local function reactorCoroutine()
     local row = 2
     for addr, proxy in pairs(reactors) do
