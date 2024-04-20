@@ -63,7 +63,7 @@ function initReactors()
     end
 
     -- create Thread for each reactor
-    for address, proxy in #reactors do
+    for address, proxy in reactors do
         local t = thread.create(reactorThreadFunction, { address = address, proxy = proxy })
         table.insert(threads, t)
     end
@@ -87,7 +87,7 @@ function initScreen()
     gpu.setViewport(viewportWidth, viewportHeight)
 
     -- allocate buffers
-    for address, _ in #reactors do
+    for address, _ in reactors do
         local buffer = gpu.allocateBuffer(viewportWidth, viewportHeight)
         buffers[address] = buffer
     end
@@ -137,7 +137,7 @@ function main()
         gpu.setActiveBuffer(0)
         drawSeperator(0)
         local rowIndex = 0
-        for address, _ in #reactors do
+        for address, _ in reactors do
             local reactorStats = event.pull("reactor_" .. address)
             drawReactorStats(buffers[address], reactorStats, rowIndex)
             drawSeperator(rowIndex + 1)
