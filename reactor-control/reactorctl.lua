@@ -109,6 +109,7 @@ function main()
             print("program exited")
             break
         end
+        coroutine.resume(update)
     end
 end
 
