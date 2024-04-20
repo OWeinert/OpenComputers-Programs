@@ -109,7 +109,7 @@ local function drawReactorStats(reactorStats, rowIndex)
     gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
 end
 
-local function updateThread()
+local function updateCoroutine()
     while true do
         drawSeparator(0)
         local rowIndex = 0
@@ -118,9 +118,9 @@ local function updateThread()
             drawReactorStats(reactorStats, rowIndex)
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
-            os.sleep()
+            coroutine.yield()
         end
-        os.sleep()
+        coroutine.yield()
     end
 end
 
@@ -129,13 +129,13 @@ function main()
     initReactors()
     initScreen()
 
-    local t = thread.create(updateThread)
-
+    local update = coroutine.create(updateCoroutine)
     while true do
         if keyboard.isControlDown() and keyboard.isKeyDown(0x11) then
-            t:kill()
+            coroutine.close(update)
             break
         end
+        coroutine.resume(update)
         os.sleep()
     end
 
