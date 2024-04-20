@@ -81,7 +81,7 @@ end
 
 local function reactorThread(reactorProxy, index)
     while true do
-        local reactorStats = getReactorStats(proxy)
+        local reactorStats = getReactorStats(reactorProxy)
 
         -- Draw activity
         local activityColor = colors.red
@@ -89,11 +89,11 @@ local function reactorThread(reactorProxy, index)
             activityColor = colors.green
         end
         gpu.setForeground(activityColor)
-        gpu.set(1, rowIndex, "██")
+        gpu.set(1, index, "██")
 
         -- Draw fuel name
         gpu.setForeground(colors.white)
-        gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "    ")
+        gpu.set(4, index, "Fuel: " .. reactorStats.fuelName .. "    ")
 
         -- Draw progressbar
         local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
@@ -103,30 +103,28 @@ local function reactorThread(reactorProxy, index)
             local clampedProgress = math.min(math.max(rawProgress, 0), 10)
             gpu.setForeground(colors.red)
             for i = 0, clampedProgress do
-                gpu.set(22 + i, rowIndex, "█")
+                gpu.set(22 + i, index, "█")
             end
             gpu.setForeground(colors.green)
             for j = clampedProgress, 10 do
-                gpu.set(22 + j, rowIndex, "█")
+                gpu.set(22 + j, index, "█")
             end
         else
             gpu.setForeground(colors.red)
             for i = 0, 10 do
-                gpu.set(22 + i, rowIndex, "█")
+                gpu.set(22 + i, index, "█")
             end
         end
 
         local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
         gpu.setForeground(colors.white)
-        gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
+        gpu.set(34, index, "Time Left: " .. timeLeft .. " s  ")
 
         -- Draw generated power
-        gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
+        gpu.set(60, index, "Power: " .. reactorStats.power)
 
         -- draw seperator
-        drawSeparator(rowIndex + 1)
-
-        rowIndex = rowIndex + 2
+        drawSeparator(index + 1)
         os.sleep(0)
     end
 end
@@ -139,10 +137,10 @@ function main()
     drawSeparator(0)
 
     local threads = {}
-    local index = 0
+    local index = 1
     for _, proxy in pairs(reactors) do
         table.insert(threads, thread.create(reactorThread(proxy, index)))
-        index = index + 1
+        index = index + 2
     end
 
     while true do
