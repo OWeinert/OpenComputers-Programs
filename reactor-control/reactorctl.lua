@@ -1,7 +1,6 @@
 local component = require("component")
 local keyboard = require("keyboard")
 local colors = require("screenColors")
-local thread = require("thread")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -101,18 +100,26 @@ local function updateCoroutine()
 
             -- Draw progressbar
             local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
-            local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
-            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-            gpu.setForeground(colors.red)
-            for i = 0, clampedProgress do
-                gpu.set(22 + i, rowIndex, "█")
-            end
-            gpu.setForeground(colors.green)
-            for j = clampedProgress, 10 do
-                gpu.set(22 + j, rowIndex, "█")
+
+            if roundedTotalProcessTime > 0 then
+                local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+                local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+                gpu.setForeground(colors.red)
+                for i = 0, clampedProgress do
+                    gpu.set(22 + i, rowIndex, "█")
+                end
+                gpu.setForeground(colors.green)
+                for j = clampedProgress, 10 do
+                    gpu.set(22 + j, rowIndex, "█")
+                end
+            else
+                gpu.setForeground(colors.red)
+                for i = 0, 10 do
+                    gpu.set(22 + i, rowIndex, "█")
+                end
             end
 
-            local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
+            local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
             gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
 
@@ -134,9 +141,10 @@ function main()
     initReactors()
     initScreen()
 
-    local renderThread = thread.create(updateCoroutine)
-
+    local update = coroutine.create(updateCoroutine)
+    coroutine.resume(update)
     while true do
+        coroutine.resume(update)
         os.sleep(0)
     end
 
