@@ -78,67 +78,97 @@ local function drawSeparator(row)
     gpu.set(0, row, string.rep("─", vpWidth))
 end
 
+
+local function drawReactorDirect(reactorStats)
+    local activityColor = colors.red
+    if reactorStats.isActive then
+        activityColor = colors.green
+    end
+    gpu.setForeground(activityColor)
+    gpu.set(1, row, "██")
+
+    gpu.setForeground(colors.white)
+    gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
+
+    local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
+
+    if roundedTotalProcessTime > 0 then
+        local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+        local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+        gpu.setForeground(colors.red)
+        gpu.set(22, row, string.rep("█", clampedProgress))
+        gpu.setForeground(colors.green)
+        gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
+    else
+        gpu.setForeground(colors.red)
+        gpu.set(22, row, string.rep("█", 10))
+    end
+
+    local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
+    gpu.setForeground(colors.white)
+    gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18))
+
+    gpu.set(52, row, "Power: " .. reactorStats.power)
+end
+
+local function drawReactorChange(reactorStats, lastReactorStats, row)
+    -- Draw activity
+    if not (lastReactorStats.isActive == reactorStats.isActive) then
+        local activityColor = colors.red
+        if reactorStats.isActive then
+            activityColor = colors.green
+        end
+        gpu.setForeground(activityColor)
+        gpu.set(1, row, "██")
+    end
+
+    -- Draw fuel name
+    if not (lastReactorStats.fuelName == reactorStats.fuelName) then
+        gpu.setForeground(colors.white)
+        gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
+    end
+
+    -- Draw progressbar
+    if not (lastReactorStats.totalProcessTime == reactorStats.totalProcessTime)
+            or not (lastReactorStats.currentProcessTime == reactorStats.currentProcessTime) then
+
+        local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
+
+        if roundedTotalProcessTime > 0 then
+            local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+            gpu.setForeground(colors.red)
+            gpu.set(22, row, string.rep("█", clampedProgress))
+            gpu.setForeground(colors.green)
+            gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
+        else
+            gpu.setForeground(colors.red)
+            gpu.set(22, row, string.rep("█", 10))
+        end
+
+        local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
+        gpu.setForeground(colors.white)
+        gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18))
+    end
+
+    if not (lastReactorStats.power == reactorStats.power) then
+        gpu.setForeground(colors.white)
+        gpu.set(52, row, "Power: " .. reactorStats.power)
+    end
+end
+
 local function reactorCoroutine()
     for addr, proxy in pairs(reactors) do
-        lastReactorStats[addr] = getReactorStats(proxy)
-        coroutine.yield()
+        drawReactorDirect(getReactorStats(proxy))
     end
     while true do
         local row = 2
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
-            local reactorStatsOld = lastReactorStats[addr]
-            coroutine.yield()
+            drawReactorChange(reactorStats, lastReactorStats[addr])
 
-            -- Draw activity
-            if reactorStatsOld == nil or not (reactorStatsOld.isActive == reactorStats.isActive) then
-                local activityColor = colors.red
-                if reactorStats.isActive then
-                    activityColor = colors.green
-                end
-                gpu.setForeground(activityColor)
-                gpu.set(1, row, "██")
-            end
-            coroutine.yield()
-
-            -- Draw fuel name
-            if reactorStatsOld == nil or not (reactorStatsOld.fuelName == reactorStats.fuelName) then
-                gpu.setForeground(colors.white)
-                gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
-            end
-            coroutine.yield()
-
-            -- Draw progressbar
-            if reactorStatsOld == nil or not (reactorStatsOld.totalProcessTime == reactorStats.totalProcessTime)
-                or not (reactorStatsOld.currentProcessTime == reactorStats.currentProcessTime) then
-
-                local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
-
-                if roundedTotalProcessTime > 0 then
-                    local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
-                    local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-                    gpu.setForeground(colors.red)
-                    gpu.set(22, row, string.rep("█", clampedProgress))
-                    gpu.setForeground(colors.green)
-                    gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
-                else
-                    gpu.setForeground(colors.red)
-                    gpu.set(22, row, string.rep("█", 10))
-                end
-
-                local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
-                gpu.setForeground(colors.white)
-                gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18))
-            end
-            coroutine.yield()
-
-            if reactorStatsOld == nil or not (reactorStatsOld.power == reactorStats.power) then
-                gpu.set(52, row, "Power: " .. reactorStats.power)
-            end
-            coroutine.yield()
-
-            lastReactorStats[addr] = reactorStats
             row = row + 2
+            lastReactorStats[addr] = reactorStats
             coroutine.yield()
         end
         coroutine.yield()
