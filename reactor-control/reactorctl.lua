@@ -143,9 +143,6 @@ function main()
     end
 
     while true do
-        if keyboard.isControlDown() and keyboard.isKeyDown("w") then
-            break;
-        end
         thread.waitForAll(threads)
         os.sleep(0)
     end
