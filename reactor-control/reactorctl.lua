@@ -132,10 +132,10 @@ function main()
     initReactors()
     initScreen()
 
-    drawSeparator(0)
+    drawSeparator(1)
 
     local threads = {}
-    local index = 1
+    local index = 2
     for addr, proxy in pairs(reactors) do
         threads[addr] = thread.create(reactorThread(proxy, index))
         drawSeparator(index + 1)
