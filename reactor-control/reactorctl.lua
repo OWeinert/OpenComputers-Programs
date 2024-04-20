@@ -120,6 +120,7 @@ local function updateCoroutine()
             drawSeparator(rowIndex + 1)
 
             rowIndex = rowIndex + 2
+            coroutine.yield()
         end
         coroutine.yield()
     end
