@@ -24,9 +24,6 @@ local reactors = {}
 -- reactor threads
 local threads = {}
 
--- map of buffers with reactor address as key
-local buffers = {}
-
 --[[
     FUNCTIONS
 ]]
@@ -79,12 +76,6 @@ function initScreen()
     gpu.setResolution(maxWidth, maxHeight)
     gpu.setViewport(maxWidth, maxHeight)
 
-    -- allocate buffers
-    for address, _ in pairs(reactors) do
-        local buffer = gpu.allocateBuffer(viewportWidth, viewportHeight)
-        buffers[address] = buffer
-    end
-
     gpu.setBackground(colors.black)
     gpu.setForeground(colors.white)
 end
@@ -95,8 +86,7 @@ local function drawSeperator(row)
 end
 
 -- draw a row of reactor stats
-local function drawReactorStats(buffer, reactorStats, rowIndex)
-    gpu.setActiveBuffer(buffer)
+local function drawReactorStats(reactorStats, rowIndex)
 
     local activityColor = colors.red
     if reactorStats.isActive then
@@ -119,7 +109,6 @@ function main()
         end
         thread.waitForAll(threads)
 
-        gpu.setActiveBuffer(0)
         drawSeperator(0)
         local rowIndex = 0
         for address, _ in pairs(reactors) do
@@ -129,9 +118,6 @@ function main()
         end
 
     end
-
-    gpu.freeAllBuffers()
-    gpu.setActiveBuffer(0)
 end
 
 
