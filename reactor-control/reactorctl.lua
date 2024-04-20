@@ -158,8 +158,10 @@ end
 
 local function reactorCoroutine()
     local row = 2
-    for _, proxy in pairs(reactors) do
-        drawReactorDirect(getReactorStats(proxy), row)
+    for addr, proxy in pairs(reactors) do
+        local reactorStats = getReactorStats(proxy)
+        drawReactorDirect(reactorStats(proxy), row)
+        lastReactorStats[addr] = reactorStats
         row = row + 2
         coroutine.yield()
     end
@@ -168,9 +170,8 @@ local function reactorCoroutine()
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
             drawReactorChange(reactorStats, lastReactorStats[addr], row)
-
-            row = row + 2
             lastReactorStats[addr] = reactorStats
+            row = row + 2
             coroutine.yield()
         end
         coroutine.yield()
