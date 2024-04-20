@@ -122,8 +122,7 @@ local function reactorThread(reactorProxy, row)
 
         -- Draw generated power
         gpu.set(60, row, "Power: " .. reactorStats.power)
-
-        os.sleep(0)
+        coroutine.yield()
     end
 end
 
@@ -143,7 +142,6 @@ function main()
     end
 
     while true do
-        thread.waitForAll(threads)
         os.sleep(0)
     end
 
