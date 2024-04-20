@@ -23,7 +23,7 @@ local reactorCount = 0
 ]]
 
 local function getReactorStats(reactorProxy)
-    local processTimeMult = reactorProxy.getReactorProcessTime() / reactorProxy.getFuelProcessTime()
+    local processTimeMult = reactorProxy.getReactorProcessTime() / reactorProxy.getFissionFuelTime()
 
     return {
         isActive = reactorProxy.isProcessing(),
