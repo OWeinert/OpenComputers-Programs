@@ -159,6 +159,7 @@ end
 local function reactorCoroutine()
     for _, proxy in pairs(reactors) do
         drawReactorDirect(getReactorStats(proxy))
+        coroutine.yield()
     end
     while true do
         local row = 2
