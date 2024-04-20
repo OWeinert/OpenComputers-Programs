@@ -87,6 +87,7 @@ local function reactorCoroutine()
             if lastReactorStats == nil then
                 lastReactorStats = reactorStats
             end
+            coroutine.yield()
 
             -- Draw activity
             if not (lastReactorStats.isActive == reactorStats.isActive) then
@@ -97,12 +98,14 @@ local function reactorCoroutine()
                 gpu.setForeground(activityColor)
                 gpu.set(1, row, "██")
             end
+            coroutine.yield()
 
             -- Draw fuel name
             if not (lastReactorStats.fuelName == reactorStats.fuelName) then
                 gpu.setForeground(colors.white)
                 gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
             end
+            coroutine.yield()
 
             -- Draw progressbar
             if not (lastReactorStats.totalProcessTime == reactorStats.totalProcessTime)
@@ -126,10 +129,12 @@ local function reactorCoroutine()
                 gpu.setForeground(colors.white)
                 gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18))
             end
+            coroutine.yield()
 
             if not (lastReactorStats.power == reactorStats.power) then
                 gpu.set(52, row, "Power: " .. reactorStats.power)
             end
+            coroutine.yield()
 
             row = row + 2
             lastReactorStats[addr] = reactorStats
@@ -154,7 +159,7 @@ function main()
         local c = coroutine.create(reactorCoroutine)
         while true do
             coroutine.resume(c)
-            os.sleep(0)
+            coroutine.yield()
         end
     end)
 
