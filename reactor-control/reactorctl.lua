@@ -136,10 +136,13 @@ function main()
         if keyboard.isControlDown() and keyboard.isKeyDown("w") then
             os.write("program exited")
             coroutine.close(update)
-            return
+            break
         end
         coroutine.resume(update)
     end
+
+    local maxWidth, maxHeight = gpu.maxResolution()
+    gpu.setViewport(maxWidth, maxHeight)
 
     os.exit()
 end
