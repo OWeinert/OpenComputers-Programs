@@ -80,8 +80,12 @@ local function drawSeparator(row)
 end
 
 local function reactorCoroutine()
+    drawSeparator(1)
+    for i = 0, reactorCount do
+        drawSeparator(2 * (i + 1))
+    end
+    coroutine.yield()
     while true do
-        drawSeparator(1)
         local row = 2
         for _, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
@@ -109,14 +113,13 @@ local function reactorCoroutine()
                 gpu.setForeground(colors.green)
                 gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
             else
+                gpu.setForeground(colors.red)
                 gpu.set(22, row, string.rep("█", 10))
             end
 
             local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
             gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s  ", 18) .. "Power: " .. reactorStats.power)
-
-            drawSeparator(row + 1)
 
             row = row + 2
             coroutine.yield()
