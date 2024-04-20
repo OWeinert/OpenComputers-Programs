@@ -17,6 +17,7 @@ local gpu = component.gpu
 
 -- reactors consisting of address and proxy to the nc_fission_reactor
 local reactors = {}
+local reactorCount = 0
 
 --[[
     FUNCTIONS
@@ -40,6 +41,7 @@ function initReactors()
     -- Find all connected reactors
     for address, _ in component.list("nc_fission_reactor") do
         reactors[address] = component.proxy(address)
+        reactorCount = reactorCount + 1
     end
 end
 
@@ -58,8 +60,9 @@ function initScreen()
 
     gpu.setResolution(maxWidth, maxHeight)
 
-    vpHeight = math.floor((2 * #reactors + 1) / 5 + 0.5) * 5
-    vpWidth = math.ceil(vpHeight / 5) * 16
+    vpHeight = math.floor((2 * reactorCount + 1) / 5 + 0.5) * 5
+    vpWidth = vpHeight / 5 * 16
+
     gpu.setViewport(vpWidth, vpHeight)
 
     gpu.setBackground(colors.black)
