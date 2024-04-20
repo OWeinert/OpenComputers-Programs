@@ -1,7 +1,6 @@
 local component = require("component")
 local colors = require("screenColors")
 local text = require("text")
-local thread = require("thread")
 local keyboard = require("keyboard")
 
 if not component.isAvailable("nc_fission_reactor") then
@@ -111,9 +110,9 @@ local function drawReactorDirect(reactorStats)
     gpu.set(52, row, "Power: " .. reactorStats.power)
 end
 
-local function drawReactorChange(reactorStats, lastReactorStats, row)
+local function drawReactorChange(reactorStats, reactorStatsOld, row)
     -- Draw activity
-    if not (lastReactorStats.isActive == reactorStats.isActive) then
+    if not (reactorStatsOld.isActive == reactorStats.isActive) then
         local activityColor = colors.red
         if reactorStats.isActive then
             activityColor = colors.green
@@ -123,14 +122,14 @@ local function drawReactorChange(reactorStats, lastReactorStats, row)
     end
 
     -- Draw fuel name
-    if not (lastReactorStats.fuelName == reactorStats.fuelName) then
+    if not (reactorStatsOld.fuelName == reactorStats.fuelName) then
         gpu.setForeground(colors.white)
         gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
     end
 
     -- Draw progressbar
-    if not (lastReactorStats.totalProcessTime == reactorStats.totalProcessTime)
-            or not (lastReactorStats.currentProcessTime == reactorStats.currentProcessTime) then
+    if not (reactorStatsOld.totalProcessTime == reactorStats.totalProcessTime)
+            or not (reactorStatsOld.currentProcessTime == reactorStats.currentProcessTime) then
 
         local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
 
@@ -151,14 +150,14 @@ local function drawReactorChange(reactorStats, lastReactorStats, row)
         gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18))
     end
 
-    if not (lastReactorStats.power == reactorStats.power) then
+    if not (reactorStatsOld.power == reactorStats.power) then
         gpu.setForeground(colors.white)
         gpu.set(52, row, "Power: " .. reactorStats.power)
     end
 end
 
 local function reactorCoroutine()
-    for addr, proxy in pairs(reactors) do
+    for _, proxy in pairs(reactors) do
         drawReactorDirect(getReactorStats(proxy))
     end
     while true do
