@@ -1,6 +1,7 @@
 local component = require("component")
 local keyboard = require("keyboard")
 local colors = require("screenColors")
+local thread = require("thread")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -108,14 +109,13 @@ local function drawReactorStats(reactorStats, rowIndex)
     gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
 end
 
-
-local function updateCoroutine()
+local function updateThread()
     while true do
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
-            --drawReactorStats(reactorStats, rowIndex)
+            drawReactorStats(reactorStats, rowIndex)
             coroutine.yield()
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
@@ -130,16 +130,13 @@ function main()
     initReactors()
     initScreen()
 
-    local update = coroutine.create(updateCoroutine)
-    coroutine.resume(update)
+    local t = thread.create(updateThread)
 
     while true do
         if keyboard.isControlDown() and keyboard.isKeyDown("w") then
-            os.write("program exited")
-            coroutine.close(update)
+            t:kill()
             break
         end
-        coroutine.resume(update)
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
