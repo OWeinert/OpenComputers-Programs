@@ -32,7 +32,7 @@ local function getReactorStats(reactorProxy)
         fuelName = reactorProxy.getFissionFuelName(),
         power = reactorProxy.getReactorProcessPower(),
         energyStored = reactorProxy.getEnergyStored(),
-        currentProcessTime = math.floor(reactorProxy.getCurrentProcessTime() * processTimeMult),
+        currentProcessTime = reactorProxy.getCurrentProcessTime() * processTimeMult,
         totalProcessTime = reactorProxy.getReactorProcessTime()
     }
 end
