@@ -133,10 +133,8 @@ function main()
     initReactors()
     initScreen()
 
-    drawSeparator(1)
-
     local c = coroutine.create(reactorCoroutine)
-
+    coroutine.resume(c)
     while true do
         coroutine.resume(c)
         os.sleep(0)
