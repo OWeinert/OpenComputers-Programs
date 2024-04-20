@@ -83,10 +83,27 @@ local function drawReactorStats(reactorStats, rowIndex)
 end
 
 
+local function updateCoroutine()
+    while true do
+        drawSeparator(0)
+        local rowIndex = 0
+        for address, proxy in pairs(reactors) do
+            local reactorStats = getReactorStats(proxy)
+            drawSeparator(rowIndex + 1)
+            rowIndex = rowIndex + 1
+            coroutine.yield()
+        end
+        coroutine.yield()
+    end
+end
+
 -- main entrypoint function
 function main()
     initReactors()
     initScreen()
+
+    local update = coroutine.create(updateCoroutine)
+    coroutine.resume(update)
 
     local running = true
     while running do
@@ -94,15 +111,6 @@ function main()
             running = false
             break;
         end
-
-        drawSeparator(0)
-        local rowIndex = 0
-        for address, proxy in pairs(reactors) do
-            local reactorStats = getReactorStats(proxy)
-            drawSeparator(rowIndex + 1)
-            rowIndex = rowIndex + 1
-        end
-
     end
 end
 
