@@ -83,13 +83,14 @@ local function reactorCoroutine()
         local row = 2
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
-            if lastReactorStats == nil then
-                lastReactorStats = reactorStats
+            local reactorStatsOld = lastReactorStats[addr]
+            if reactorStatsOld == nil then
+                reactorStatsOld = reactorStats
             end
             coroutine.yield()
 
             -- Draw activity
-            if not (lastReactorStats.isActive == reactorStats.isActive) then
+            if not (reactorStatsOld.isActive == reactorStats.isActive) then
                 local activityColor = colors.red
                 if reactorStats.isActive then
                     activityColor = colors.green
@@ -100,15 +101,15 @@ local function reactorCoroutine()
             coroutine.yield()
 
             -- Draw fuel name
-            if not (lastReactorStats.fuelName == reactorStats.fuelName) then
+            if not (reactorStatsOld.fuelName == reactorStats.fuelName) then
                 gpu.setForeground(colors.white)
                 gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
             end
             coroutine.yield()
 
             -- Draw progressbar
-            if not (lastReactorStats.totalProcessTime == reactorStats.totalProcessTime)
-                or not (lastReactorStats.currentProcessTime == reactorStats.currentProcessTime) then
+            if not (reactorStatsOld.totalProcessTime == reactorStats.totalProcessTime)
+                or not (reactorStatsOld.currentProcessTime == reactorStats.currentProcessTime) then
 
                 local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
 
@@ -130,7 +131,7 @@ local function reactorCoroutine()
             end
             coroutine.yield()
 
-            if not (lastReactorStats.power == reactorStats.power) then
+            if not (reactorStatsOld.power == reactorStats.power) then
                 gpu.set(52, row, "Power: " .. reactorStats.power)
             end
             coroutine.yield()
