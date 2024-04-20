@@ -79,7 +79,7 @@ local function drawSeparator(row)
     gpu.fill(0, row, vpWidth, 1, "─")
 end
 
-local function reactorThread(reactorProxy, index)
+local function reactorThread(reactorProxy, row)
     while true do
         local reactorStats = getReactorStats(reactorProxy)
 
@@ -89,11 +89,11 @@ local function reactorThread(reactorProxy, index)
             activityColor = colors.green
         end
         gpu.setForeground(activityColor)
-        gpu.set(1, index, "██")
+        gpu.set(1, row, "██")
 
         -- Draw fuel name
         gpu.setForeground(colors.white)
-        gpu.set(4, index, "Fuel: " .. reactorStats.fuelName .. "    ")
+        gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
 
         -- Draw progressbar
         local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
@@ -103,25 +103,25 @@ local function reactorThread(reactorProxy, index)
             local clampedProgress = math.min(math.max(rawProgress, 0), 10)
             gpu.setForeground(colors.red)
             for i = 0, clampedProgress do
-                gpu.set(22 + i, index, "█")
+                gpu.set(22 + i, row, "█")
             end
             gpu.setForeground(colors.green)
             for j = clampedProgress, 10 do
-                gpu.set(22 + j, index, "█")
+                gpu.set(22 + j, row, "█")
             end
         else
             gpu.setForeground(colors.red)
             for i = 0, 10 do
-                gpu.set(22 + i, index, "█")
+                gpu.set(22 + i, row, "█")
             end
         end
 
         local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
         gpu.setForeground(colors.white)
-        gpu.set(34, index, "Time Left: " .. timeLeft .. " s  ")
+        gpu.set(34, row, "Time Left: " .. timeLeft .. " s  ")
 
         -- Draw generated power
-        gpu.set(60, index, "Power: " .. reactorStats.power)
+        gpu.set(60, row, "Power: " .. reactorStats.power)
 
         os.sleep(0)
     end
@@ -146,6 +146,7 @@ function main()
         if keyboard.isControlDown() and keyboard.isKeyDown("w") then
             break;
         end
+        thread.waitForAll(threads)
         os.sleep(0)
     end
 
