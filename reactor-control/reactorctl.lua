@@ -98,8 +98,7 @@ local function updateCoroutine()
             gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
             -- Draw progressbar
-            io.write("4")
-            gpu.set(17, reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
+            io.write(reactorStats.currentProcessTime .. "/" .. reactorStats.totalProcessTime)
 
             -- Draw generated power
             io.write("5")
