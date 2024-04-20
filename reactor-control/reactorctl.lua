@@ -1,6 +1,4 @@
 local component = require("component")
-local thread = require("thread")
-local event = require("event")
 local keyboard = require("keyboard")
 
 local colors = require("screenColors")
@@ -20,9 +18,6 @@ local gpu = component.gpu
 
 -- reactors consisting of address and proxy to the nc_fission_reactor
 local reactors = {}
-
--- reactor threads
-local threads = {}
 
 --[[
     FUNCTIONS
@@ -55,12 +50,6 @@ function initReactors()
     for address, _ in component.list("nc_fission_reactor") do
         reactors[address] = component.proxy(address)
     end
-
-    -- create Thread for each reactor
-    for address, proxy in pairs(reactors) do
-        local t = thread.create(reactorThreadFunction, { address = address, proxy = proxy })
-        table.insert(threads, t)
-    end
 end
 
 
@@ -88,7 +77,6 @@ end
 
 -- draw a row of reactor stats
 local function drawReactorStats(reactorStats, rowIndex)
-
     local activityColor = colors.red
     if reactorStats.isActive then
         activityColor = colors.green
@@ -104,7 +92,7 @@ function main()
 
     local running = true
     while running do
-        if keyboard.isKeyDown("x") then
+        if keyboard.isControlDown() and keyboard.isKeyDown("x") then
             running = false
             break;
         end
@@ -112,8 +100,8 @@ function main()
 
         drawSeparator(0)
         local rowIndex = 0
-        for address, _ in pairs(reactors) do
-            local reactorStats = event.pull("reactor_" .. address)
+        for address, proxy in pairs(reactors) do
+            local reactorStats = getReactorStats(proxy)
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 1
         end
