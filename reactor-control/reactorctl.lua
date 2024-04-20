@@ -81,7 +81,7 @@ end
 
 local function reactorCoroutine()
     while true do
-        local row = 2
+        local row = 0
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
 
