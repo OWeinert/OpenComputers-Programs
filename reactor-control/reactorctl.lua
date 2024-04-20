@@ -80,6 +80,7 @@ local function drawSeparator(row)
 end
 
 local function reactorThread(reactorProxy, row)
+    os.sleep(0)
     while true do
         local reactorStats = getReactorStats(reactorProxy)
 
@@ -122,7 +123,7 @@ local function reactorThread(reactorProxy, row)
 
         -- Draw generated power
         gpu.set(60, row, "Power: " .. reactorStats.power)
-        coroutine.yield()
+        os.sleep(0)
     end
 end
 
