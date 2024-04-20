@@ -60,8 +60,9 @@ function initScreen()
 
     gpu.setResolution(maxWidth, maxHeight)
 
-    vpHeight = math.floor((2 * reactorCount + 1) / 5 + 0.5) * 5
-    vpWidth = vpHeight / 5 * 16
+    local cellSize = math.floor((2 * reactorCount + 1) / 5 + 0.5)
+    vpHeight = cellSize * 5
+    vpWidth = cellSize * 16
 
     gpu.setViewport(vpWidth, vpHeight)
 
@@ -81,6 +82,28 @@ local function drawReactorStats(reactorStats, rowIndex)
         activityColor = colors.green
     end
 
+    -- Draw activity
+    gpu.setForeground(activityColor)
+    gpu.set(0, rowIndex, "██")
+
+    -- Draw fuel name
+    gpu.setForeground(colors.white)
+    gpu.set(3, rowIndex, "Fuel: " .. reactorStats.fuelName)
+
+    -- Draw progressbar
+    local progress = math.floor(reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
+    gpu.setForeground(colors.green)
+    for i = 0, progress do
+        gpu.set(12 + i, rowIndex, "█")
+    end
+    gpu.setForeground(colors.red)
+    for j = progress, 10 do
+        gpu.set(12 + j, rowIndex, "█")
+    end
+
+    -- Draw generated power
+    gpu.setForeground(colors.white)
+    gpu.set(23, rowIndex, "Power: " .. reactorStats.power)
 end
 
 
@@ -88,10 +111,11 @@ local function updateCoroutine()
     while true do
         drawSeparator(0)
         local rowIndex = 0
-        for address, proxy in pairs(reactors) do
+        for _, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
+            drawReactorStats(reactorStats, rowIndex)
             drawSeparator(rowIndex + 1)
-            rowIndex = rowIndex + 1
+            rowIndex = rowIndex + 2
             coroutine.yield()
         end
         coroutine.yield()
@@ -106,12 +130,11 @@ function main()
     local update = coroutine.create(updateCoroutine)
     coroutine.resume(update)
 
-    local running = true
-    while running do
-        if keyboard.isControlDown() then
-            running = false
-            print("program exited")
-            break
+    while true do
+        if keyboard.isControlDown() and keyboard.isKeyDown("x") then
+            os.write("program exited")
+            coroutine.close(update)
+            return
         end
         coroutine.resume(update)
     end
