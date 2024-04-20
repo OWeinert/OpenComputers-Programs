@@ -101,23 +101,15 @@ local function updateCoroutine()
 
             -- Draw progressbar
             local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
-
-            if roundedTotalProcessTime > 0 then
-                local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
-                local clampedProgress = math.min(math.max(rawProgress, 0), 10)
-                gpu.setForeground(colors.red)
-                for i = 0, clampedProgress do
-                    gpu.set(22 + i, rowIndex, "█")
-                end
-                gpu.setForeground(colors.green)
-                for j = clampedProgress, 10 do
-                    gpu.set(22 + j, rowIndex, "█")
-                end
-            else
-                gpu.setForeground(colors.red)
-                for i = 0, 10 do
-                    gpu.set(22 + i, rowIndex, "█")
-                end
+            local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
+            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
+            gpu.setForeground(colors.red)
+            for i = 0, clampedProgress do
+                gpu.set(22 + i, rowIndex, "█")
+            end
+            gpu.setForeground(colors.green)
+            for j = clampedProgress, 10 do
+                gpu.set(22 + j, rowIndex, "█")
             end
 
             local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
@@ -142,10 +134,9 @@ function main()
     initReactors()
     initScreen()
 
-    local update = coroutine.create(updateCoroutine)
-    coroutine.resume(update)
+    local renderThread = thread.create(updateCoroutine)
+
     while true do
-        coroutine.resume(update)
         os.sleep(0)
     end
 
