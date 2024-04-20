@@ -79,14 +79,14 @@ local function drawSeparator(row)
 end
 
 local function reactorCoroutine()
+    for addr, proxy in pairs(reactors) do
+        lastReactorStats[addr] = getReactorStats(proxy)
+    end
     while true do
         local row = 2
         for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
             local reactorStatsOld = lastReactorStats[addr]
-            if reactorStatsOld == nil then
-                reactorStatsOld = reactorStats
-            end
             coroutine.yield()
 
             -- Draw activity
@@ -155,18 +155,12 @@ function main()
         drawSeparator((2 * i) + 1)
     end
 
-    local t = thread.create(function()
-        local c = coroutine.create(reactorCoroutine)
-        while true do
-            coroutine.resume(c)
-            coroutine.yield()
-        end
-    end)
-
+    local c = coroutine.create(reactorCoroutine)
     while true do
         if keyboard.isControlDown() and keyboard.isKeyDown("w") then
             break;
         end
+        coroutine.resume(c)
         os.sleep(0)
     end
 
