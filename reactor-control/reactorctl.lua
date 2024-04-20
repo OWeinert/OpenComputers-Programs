@@ -61,7 +61,7 @@ function initScreen()
 
     gpu.setResolution(maxWidth, maxHeight)
 
-    local cellSize = math.floor((2 * reactorCount + 2) / 5 + 0.5)
+    local cellSize = math.floor((2 * reactorCount + 1) / 5 + 0.5)
     vpHeight = cellSize * 5
     vpWidth = cellSize * 16
 
@@ -87,7 +87,7 @@ local function reactorCoroutine()
     coroutine.yield()
     while true do
         local row = 2
-        for _, proxy in pairs(reactors) do
+        for addr, proxy in pairs(reactors) do
             local reactorStats = getReactorStats(proxy)
 
             -- Draw activity
