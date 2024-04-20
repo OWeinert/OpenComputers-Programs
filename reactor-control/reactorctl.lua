@@ -104,9 +104,10 @@ local function updateCoroutine()
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
             drawReactorStats(getReactorStats(proxy), rowIndex)
-            drawSeparator(rowIndex + 1)
             coroutine.yield()
+            drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
+            coroutine.yield()
         end
         coroutine.yield()
     end
@@ -125,7 +126,6 @@ function main()
             break
         end
         coroutine.resume(update)
-        os.sleep()
     end
 
     local maxWidth, maxHeight = gpu.maxResolution()
