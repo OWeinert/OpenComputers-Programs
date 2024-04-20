@@ -99,8 +99,10 @@ local function reactorCoroutine()
             gpu.set(1, row, "██")
 
             -- Draw fuel name
-            gpu.setForeground(colors.white)
-            gpu.set(4, row, "Fuel: " .. reactorStats.fuelName .. "    ")
+            if not reactorStats.fuelName == "No Fuel" then
+                gpu.setForeground(colors.white)
+                gpu.set(4, row, "Fuel: " .. fuelName .. "    ")
+            end
 
             -- Draw progressbar
             local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
