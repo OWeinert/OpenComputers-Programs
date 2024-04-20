@@ -44,6 +44,9 @@ function initReactors()
 end
 
 
+local vpWidth = 0
+local vpHeight = 0
+
 function initScreen()
 
     -- check if needed resolution is supported
@@ -54,7 +57,12 @@ function initScreen()
     end
 
     gpu.setResolution(maxWidth, maxHeight)
-    gpu.setViewport(maxWidth, maxHeight)
+
+    --calculate viewport
+    vpHeight = 2 * #reactors + 1
+    vpWidth = (vpHeight / 3) * 5
+
+    gpu.setViewport(vpHeight, vpWidth)
 
     gpu.setBackground(colors.black)
     gpu.setForeground(colors.white)
@@ -62,8 +70,7 @@ end
 
 
 local function drawSeparator(row)
-    local width, _ = gpu.getResolution()
-    gpu.fill(0, row, width, 1, "─")
+    gpu.fill(0, row, vpWidth, 1, "─")
 end
 
 -- draw a row of reactor stats
