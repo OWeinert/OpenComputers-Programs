@@ -109,7 +109,7 @@ local function reactorCoroutine()
                 gpu.setForeground(colors.green)
                 gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
             else
-                gpu.set(22 + i, row, string.rep("█", 10))
+                gpu.set(22, row, string.rep("█", 10))
             end
 
             local timeLeft = math.max(math.floor((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
