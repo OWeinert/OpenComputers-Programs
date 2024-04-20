@@ -31,7 +31,8 @@ local function getReactorStats(reactorProxy)
         power = reactorProxy.getReactorProcessPower(),
         energyStored = reactorProxy.getEnergyStored(),
         currentProcessTime = reactorProxy.getCurrentProcessTime(),
-        totalProcessTime = reactorProxy.getFissionFuelTime()
+        totalProcessTime = reactorProxy.getFissionFuelTime(),
+        processMod = reactorProxy.getReactorProcessTime()
     }
 end
 
@@ -97,22 +98,25 @@ local function updateCoroutine()
             gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "  ")
 
             -- Draw progressbar
-            local progress = (reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
+            local rawProgress = math.floor(reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
+            local clampedProgress = math.min(math.max(rawProgress, 0), 10)
             gpu.setForeground(colors.green)
-            for i = 0, progress do
+            for i = 0, clampedProgress do
                 gpu.set(22 + i, rowIndex, "█")
             end
             gpu.setForeground(colors.red)
-            for j = progress, 10 do
+            for j = clampedProgress, 10 do
                 gpu.set(22 + j, rowIndex, "█")
             end
 
-            local timeLeft = math.ceil((reactorStats.totalProcessTime - reactorStats.currentProcessTime) / 20)
+            local timeLeft = math.max(math.ceil((reactorStats.totalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
             gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
+
+            gpu.set(75, rowIndex, reactorStats.processMod)
 
             -- draw seperator
             drawSeparator(rowIndex + 1)
