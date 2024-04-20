@@ -58,8 +58,8 @@ function initScreen()
 
     gpu.setResolution(maxWidth, maxHeight)
 
-    vpHeight = math.floor((2 * #reactors + 1) / 5) * 5
-    vpWidth = vpHeight / 5 * 16
+    vpHeight = math.floor((2 * #reactors + 1) / 5 + 0.5) * 5
+    vpWidth = math.ceil(vpHeight / 5) * 16
     gpu.setViewport(vpWidth, vpHeight)
 
     gpu.setBackground(colors.black)
