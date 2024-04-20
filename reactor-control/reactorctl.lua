@@ -1,7 +1,6 @@
 local component = require("component")
 local keyboard = require("keyboard")
 local colors = require("screenColors")
-local thread = require("thread")
 
 if not component.isAvailable("nc_fission_reactor") then
     print("No NuclearCraft FissionReactor detected!")
@@ -114,8 +113,7 @@ local function updateCoroutine()
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
-            local reactorStats = getReactorStats(proxy)
-            drawReactorStats(reactorStats, rowIndex)
+            drawReactorStats(getReactorStats(proxy), rowIndex)
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
             coroutine.yield()
