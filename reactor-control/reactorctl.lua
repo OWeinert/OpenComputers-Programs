@@ -61,9 +61,8 @@ function initScreen()
 
     gpu.setResolution(maxWidth, maxHeight)
 
-    local cellSize = math.floor((2 * reactorCount + 1) / 5 + 0.5)
-    vpHeight = cellSize * 5
-    vpWidth = cellSize * 16
+    vpHeight = math.floor((2 * reactorCount + 1) / 5 + 0.5) * 5
+    vpWidth = 80
 
     gpu.setViewport(vpWidth, vpHeight)
 
