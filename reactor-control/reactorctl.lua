@@ -121,6 +121,7 @@ local function reactorCoroutine()
             gpu.setForeground(colors.white)
             gpu.set(34, row, text.padRight("Time Left: " .. timeLeft .. " s", 18) .. "Power: " .. reactorStats.power)
 
+            gpu.set(80, row, addr)
             row = row + 2
             coroutine.yield()
         end
