@@ -108,7 +108,9 @@ local function updateThread()
             drawReactorStats(reactorStats, rowIndex)
             drawSeparator(rowIndex + 1)
             rowIndex = rowIndex + 2
+            coroutine.yield()
         end
+        coroutine.yield()
     end
 end
 
