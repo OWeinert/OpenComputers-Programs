@@ -136,7 +136,7 @@ function main()
 
     local threads = {}
     local index = 1
-    for _, proxy in pairs(reactors) do
+    for addr, proxy in pairs(reactors) do
         table.insert(threads, thread.create(reactorThread(proxy, index)))
         drawSeparator(index + 1)
         index = index + 2
