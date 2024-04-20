@@ -1,6 +1,5 @@
 local component = require("component")
 local keyboard = require("keyboard")
-
 local colors = require("screenColors")
 local config = require("reactorctl-cfg")
 
@@ -34,14 +33,6 @@ local function getReactorStats(reactorProxy)
         currentProcessTime = reactorProxy.getCurrentProcessTime(),
         totalProcessTime = reactorProxy.getReactorProcessTime()
     }
-end
-
-
-local function reactorThreadFunction (reactor)
-    while true do
-        local stats = getReactorStats(reactor)
-        event.push("reactor_" .. reactor.address, stats)
-    end
 end
 
 
@@ -96,7 +87,6 @@ function main()
             running = false
             break;
         end
-        thread.waitForAll(threads)
 
         drawSeparator(0)
         local rowIndex = 0
