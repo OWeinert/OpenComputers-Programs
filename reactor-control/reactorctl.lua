@@ -23,6 +23,8 @@ local reactorCount = 0
 ]]
 
 local function getReactorStats(reactorProxy)
+    local processTimeMult = reactorProxy.getReactorProcessTime() / reactorProxy.getReactorProcessTime()
+
     return {
         isActive = reactorProxy.isProcessing(),
         isComplete = reactorProxy.isComplete(),
@@ -30,7 +32,7 @@ local function getReactorStats(reactorProxy)
         fuelName = reactorProxy.getFissionFuelName(),
         power = reactorProxy.getReactorProcessPower(),
         energyStored = reactorProxy.getEnergyStored(),
-        currentProcessTime = reactorProxy.getCurrentProcessTime(),
+        currentProcessTime = math.floor(reactorProxy.getCurrentProcessTime() * processTimeMult),
         totalProcessTime = reactorProxy.getReactorProcessTime()
     }
 end
