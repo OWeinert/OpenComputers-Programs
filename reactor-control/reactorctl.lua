@@ -84,7 +84,6 @@ local function reactorCoroutine()
     for i = 0, reactorCount do
         drawSeparator((2 * i) + 1)
     end
-    coroutine.yield()
     while true do
         local row = 2
         for addr, proxy in pairs(reactors) do
@@ -123,8 +122,10 @@ local function reactorCoroutine()
 
             gpu.set(80, row, addr)
             row = row + 2
+            os.sleep(0)
             coroutine.yield()
         end
+        os.sleep(0)
         coroutine.yield()
     end
 end
