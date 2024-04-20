@@ -82,8 +82,6 @@ local function updateCoroutine()
         drawSeparator(0)
         local rowIndex = 0
         for _, proxy in pairs(reactors) do
-            gpu.fill(0, rowIndex, vpWidth, 1, " ")
-
             local reactorStats = getReactorStats(proxy)
 
             -- Draw activity
@@ -96,22 +94,22 @@ local function updateCoroutine()
 
             -- Draw fuel name
             gpu.setForeground(colors.white)
-            gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName)
+            gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "  ")
 
             -- Draw progressbar
             local progress = (reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
             gpu.setForeground(colors.green)
             for i = 0, progress do
-                gpu.set(19 + i, rowIndex, "█")
+                gpu.set(22 + i, rowIndex, "█")
             end
             gpu.setForeground(colors.red)
             for j = progress, 10 do
-                gpu.set(19 + j, rowIndex, "█")
+                gpu.set(22 + j, rowIndex, "█")
             end
 
-            local timeLeft = math.ceil(reactorStats.totalProcessTime - reactorStats.currentProcessTime / 20)
+            local timeLeft = math.ceil((reactorStats.totalProcessTime - reactorStats.currentProcessTime) / 20)
             gpu.setForeground(colors.white)
-            gpu.set(41, rowIndex, "Time Left: " .. timeLeft .. " s")
+            gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
