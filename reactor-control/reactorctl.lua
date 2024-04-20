@@ -105,9 +105,9 @@ local function reactorCoroutine()
                 local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
                 local clampedProgress = math.min(math.max(rawProgress, 0), 10)
                 gpu.setForeground(colors.red)
-                gpu.set(22, row, string.rep("█", progress))
+                gpu.set(22, row, string.rep("█", clampedProgress))
                 gpu.setForeground(colors.green)
-                gpu.set(22 + progress, row, string.rep("█", 10 - progress))
+                gpu.set(22 + clampedProgress, row, string.rep("█", 10 - clampedProgress))
             else
                 gpu.set(22 + i, row, string.rep("█", 10))
             end
