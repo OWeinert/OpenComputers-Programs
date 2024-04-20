@@ -99,7 +99,7 @@ local function updateCoroutine()
             gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName .. "  ")
 
             -- Draw progressbar
-            local roundedTotalProcessTime = math.floor(reactorStats.totalProcessTime)
+            local roundedTotalProcessTime = math.ceil(reactorStats.totalProcessTime)
 
             local rawProgress = math.floor(reactorStats.currentProcessTime / roundedTotalProcessTime * 10)
             local clampedProgress = math.min(math.max(rawProgress, 0), 10)
@@ -114,7 +114,7 @@ local function updateCoroutine()
 
             local timeLeft = math.max(math.ceil((roundedTotalProcessTime - reactorStats.currentProcessTime) / 20), 0)
             gpu.setForeground(colors.white)
-            gpu.set(34, rowIndex, "Time Left: " .. timeLeft .. " s  ")
+            gpu.set(34, rowIndex, "Time Left: " .. reactorStats.roundedTotalProcessTime .. " s  ")
 
             -- Draw generated power
             gpu.set(60, rowIndex, "Power: " .. reactorStats.power)
