@@ -67,6 +67,9 @@ function initScreen()
 
     gpu.setBackground(colors.black)
     gpu.setForeground(colors.white)
+
+    -- clear screen
+    gpu.fill(0, 0, vpWidth, vpHeight, " ")
 end
 
 
@@ -94,9 +97,15 @@ local function updateCoroutine()
             gpu.set(4, rowIndex, "Fuel: " .. reactorStats.fuelName)
 
             -- Draw progressbar
-            local roundedProgressTime = math.floor(reactorStats.currentProcessTime + 0.5)
-            local roundedTotalProgressTime = math.floor(reactorStats.totalProcessTime + 0.5)
-            gpu.set(19, rowIndex, roundedProgressTime .. "/" .. roundedTotalProgressTime)
+            local progress = (reactorStats.currentProcessTime / reactorStats.totalProcessTime * 10)
+            gpu.setForeground(colors.green)
+            for i = 0, progress do
+                gpu.set(19 + i, rowIndex, "█")
+            end
+            gpu.setForeground(colors.red)
+            for j = progress, 10 do
+                gpu.set(19 + j, rowIndex, "█")
+            end
 
             -- Draw generated power
             gpu.setForeground(colors.white)
