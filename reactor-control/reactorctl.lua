@@ -5,13 +5,11 @@ local thread = require("thread")
 local keyboard = require("keyboard")
 
 if not component.isAvailable("nc_fission_reactor") then
-    print("No NuclearCraft FissionReactor detected!")
-    return
+    error("No NuclearCraft FissionReactor detected!")
 end
 
 if not component.isAvailable("gpu") then
-    print("No GPU detected!")
-    return
+    error("No GPU detected!")
 end
 
 local gpu = component.gpu
