@@ -47,13 +47,6 @@ function initReactors()
         reactors[addr] = component.proxy(addr)
         reactorCount = reactorCount + 1
     end
-
-    reactorThread = thread.create(function()
-        for addr, proxy in pairs() do
-            local stats = getReactorStats(proxy)
-            reactorData[addr] = stats
-        end
-    end)
 end
 
 
